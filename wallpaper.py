@@ -85,4 +85,4 @@ if __name__ == "__main__":
 
         helper.clean_up(configSettings)
         time.sleep(120)
-        print('')
+        #print('')
