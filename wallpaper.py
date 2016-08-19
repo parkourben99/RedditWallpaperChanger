@@ -11,15 +11,15 @@ import time
 class BackGroundChanger(object):
     def __init__(self, config):
         self.config = config
-        self.image_url = self.getImage()
-        self.image_name = self.getImageName(self.image_url)
-        self.downloadImage()
-        self.setWallpaper()
+        self.image_url = self.get_image()
+        self.image_name = self.get_image_name(self.image_url)
+        self.download_image()
+        self.set_wallpaper()
 
-    def validateImage(self, sub):
+    def validate_image(self, sub):
         if sub.over_18 and not self.config['over_18']: return False
 
-        file_name = self.getImageName(sub.url)
+        file_name = self.get_image_name(sub.url)
         file_name = self.config['wallpapers_directory'] + file_name
 
         file_exts = ('png', 'bmp', 'jpeg', 'jpg')
@@ -29,28 +29,28 @@ class BackGroundChanger(object):
 
         return not os.path.exists(file_name)
 
-    def getImage(self):
-        subreddit = random.choice(self.config['subs']).strip()
+    def get_image(self):
+        sub_reddit = random.choice(self.config['subs']).strip()
 
         reddit = praw.Reddit('wallpaper changer for linux by /u/parkourben99')
-        images = reddit.get_subreddit(subreddit)
+        images = reddit.get_subreddit(sub_reddit)
 
         for sub in images.get_hot(limit=150):
-            if self.validateImage(sub):
-                print('Downloading image form /r/' + subreddit)
+            if self.validate_image(sub):
+                print('Downloading image form /r/' + sub_reddit)
                 return sub.url
 
-    def getImageName(self, fileName):
-        file_name = fileName.split('/')
+    def get_image_name(self, file_name):
+        file_name = file_name.split('/')
         return file_name[len(file_name) - 1]
 
-    def downloadImage(self):
+    def download_image(self):
         local_file = self.config['wallpapers_directory'] + self.image_name
         open(local_file, 'w+').close()
         print('saving image to ' + local_file)
         urllib.request.urlretrieve(self.image_url, local_file)
 
-    def setWallpaper(self):
+    def set_wallpaper(self):
         image_path = self.config['wallpapers_directory'] + self.image_name
         os.system("gsettings set org.gnome.desktop.background picture-uri file://" + image_path)
 
@@ -59,30 +59,30 @@ class ChooseRandomWallPaper(object):
     def __init__(self, config):
         self.config = config
         print('Picking a random one from the matrix')
-        self.setWallpaper(self.chooseWallPaper())
+        self.set_wallpaper(self.choose_wallPaper())
 
-    def chooseWallPaper(self):
+    def choose_wallPaper(self):
         fileName = random.choice(listdir(self.config['wallpapers_directory']))
         return self.config['wallpapers_directory'] + fileName
 
-    def setWallpaper(self, imagePath):
-        print('loading new wallpaper' + imagePath)
-        os.system("gsettings set org.gnome.desktop.background picture-uri file://" + imagePath)
+    def set_wallpaper(self, image):
+        print('loading new wallpaper' + image)
+        os.system("gsettings set org.gnome.desktop.background picture-uri file://" + image)
 
 
 if __name__ == "__main__":
     helper = Helper()
-    configSettings = helper.get_config()
+    config_settings = helper.get_config()
 
-    while(True):
+    while True:
         try:
             if random.choice([1, 2]) == 1:
-                BackGroundChanger(configSettings)
+                BackGroundChanger(config_settings)
             else:
-                ChooseRandomWallPaper(configSettings)
+                ChooseRandomWallPaper(config_settings)
         except Exception as e:
-            ChooseRandomWallPaper(configSettings)
+            ChooseRandomWallPaper(config_settings)
 
-        helper.clean_up(configSettings)
+        helper.clean_up(config_settings)
         time.sleep(120)
         #print('')

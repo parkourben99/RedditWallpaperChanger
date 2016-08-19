@@ -51,8 +51,10 @@ class Helper(object):
         return config
 
     def clean_up(self, config):
-        allFiles = listdir(config['wallpapers_directory'])
-        for image in allFiles:
+        all_files = listdir(config['wallpapers_directory'])
+
+        for image in all_files:
             file = config['wallpapers_directory'] + image
-            if (os.stat(file).st_size == 0):
+
+            if os.stat(file).st_size == 0:
                 os.remove(file)
