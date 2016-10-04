@@ -5,7 +5,6 @@ import praw
 import urllib.request
 from os import listdir
 from helper import Helper
-import time
 
 
 class BackGroundChanger(object):
@@ -74,15 +73,12 @@ if __name__ == "__main__":
     helper = Helper()
     configSettings = helper.get_config()
 
-    while(True):
-        try:
-            if random.choice([1, 2]) == 1:
-                BackGroundChanger(configSettings)
-            else:
-                ChooseRandomWallPaper(configSettings)
-        except Exception as e:
+    try:
+        if random.choice([1, 2]) == 1:
+            BackGroundChanger(configSettings)
+        else:
             ChooseRandomWallPaper(configSettings)
+    except Exception as e:
+        ChooseRandomWallPaper(configSettings)
 
-        helper.clean_up(configSettings)
-        time.sleep(120)
-        print('')
+    helper.clean_up(configSettings)
