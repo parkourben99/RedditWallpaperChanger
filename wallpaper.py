@@ -10,10 +10,18 @@ from helper import Helper
 class BackGroundChanger(object):
     def __init__(self, config):
         self.config = config
-        self.image_url = self.get_image()
-        self.image_name = self.get_image_name(self.image_url)
-        self.download_image()
-        self.set_wallpaper()
+        self.image = None
+
+        if bool(random.getrandbits(1)):
+            try:
+                self.image_url = self.get_image()
+                self.image_name = self.get_image_name(self.image_url)
+                self.download_image()
+                self.image = self.image_name
+            except:
+                self.random_wallpaper()
+        else:
+            self.random_wallpaper()
 
     def validate_image(self, sub):
         if sub.over_18 and not self.config['over_18']: return False
@@ -49,37 +57,18 @@ class BackGroundChanger(object):
         print('saving image to ' + local_file)
         urllib.request.urlretrieve(self.image_url, local_file)
 
-    def set_wallpaper(self):
-        image_path = self.config['wallpapers_directory'] + self.image_name
-        os.system("gsettings set org.gnome.desktop.background picture-uri file://" + image_path)
-
-
-class ChooseRandomWallPaper(object):
-    def __init__(self, config):
-        self.config = config
+    def random_wallpaper(self):
         print('Picking a random one from the matrix')
-        self.set_wallpaper(self.choose_wallPaper())
-
-    def choose_wallPaper(self):
-        fileName = random.choice(listdir(self.config['wallpapers_directory']))
-        return self.config['wallpapers_directory'] + fileName
-
-    def set_wallpaper(self, image):
-        print('loading new wallpaper' + image)
-        os.system("gsettings set org.gnome.desktop.background picture-uri file://" + image)
+        file_name = random.choice(listdir(self.config['wallpapers_directory']))
+        self.image = self.config['wallpapers_directory'] + file_name
 
 
 if __name__ == "__main__":
     helper = Helper()
     config_settings = helper.get_config()
 
-    try:
-        if random.choice([1, 2]) == 1:
-            BackGroundChanger(config_settings)
-        else:
-            ChooseRandomWallPaper(config_settings)
-    except Exception as e:
-        ChooseRandomWallPaper(config_settings)
+    changer = BackGroundChanger(config_settings)
 
+    helper.set_wallpaper(changer.image)
     helper.clean_up(config_settings)
 

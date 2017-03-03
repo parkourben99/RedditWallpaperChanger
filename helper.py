@@ -50,6 +50,10 @@ class Helper(object):
 
         return config
 
+    def set_wallpaper(self, image):
+        print('loading new wallpaper' + image)
+        os.system("gsettings set org.gnome.desktop.background picture-uri file://" + image)
+
     def clean_up(self, config):
         all_files = listdir(config['wallpapers_directory'])
 
