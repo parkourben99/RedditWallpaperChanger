@@ -1,6 +1,7 @@
 import os
 from configparser import ConfigParser
 from os import listdir
+from gi.repository import Notify, GdkPixbuf
 
 
 class Helper(object):
@@ -53,6 +54,20 @@ class Helper(object):
     def set_wallpaper(self, image):
         print('loading new wallpaper' + image)
         os.system("gsettings set org.gnome.desktop.background picture-uri file://" + image)
+        self.send_notifaction()
+
+    def send_notifaction(self):
+        Notify.init("Wallpaper Changer")
+        notification = Notify.Notification.new(
+            'New wallpaper has been set!',
+            #'this is the body',
+        )
+
+        image = GdkPixbuf.Pixbuf.new_from_file(os.path.dirname(os.path.realpath(__file__)) + '/alien.png')
+        notification.set_icon_from_pixbuf(image)
+        notification.set_image_from_pixbuf(image)
+
+        notification.show()
 
     def clean_up(self, config):
         all_files = listdir(config['wallpapers_directory'])
