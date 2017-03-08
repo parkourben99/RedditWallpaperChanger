@@ -65,10 +65,8 @@ class BackGroundChanger(object):
 
 if __name__ == "__main__":
     helper = Helper()
-    config_settings = helper.get_config()
-
-    changer = BackGroundChanger(config_settings)
+    changer = BackGroundChanger(helper.get_config())
 
     helper.set_wallpaper(changer.image)
-    helper.clean_up(config_settings)
+    helper.clean_up()
 

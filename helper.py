@@ -64,12 +64,12 @@ class Helper(object):
         )
 
         image = GdkPixbuf.Pixbuf.new_from_file(os.path.dirname(os.path.realpath(__file__)) + '/alien.png')
-        notification.set_icon_from_pixbuf(image)
         notification.set_image_from_pixbuf(image)
 
         notification.show()
 
-    def clean_up(self, config):
+    def clean_up(self):
+        config = self.get_config()
         all_files = listdir(config['wallpapers_directory'])
 
         for image in all_files:
