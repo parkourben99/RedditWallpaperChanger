@@ -1,6 +1,8 @@
 import os
 from configparser import ConfigParser
 from os import listdir
+import gi
+gi.require_version("Notify", "0.7")
 from gi.repository import Notify, GdkPixbuf
 
 
@@ -52,8 +54,9 @@ class Helper(object):
         return config
 
     def set_wallpaper(self, image):
+        config = self.get_config()
         print('loading new wallpaper' + image)
-        os.system("gsettings set org.gnome.desktop.background picture-uri file://" + image)
+        os.system("gsettings set org.gnome.desktop.background picture-uri file://{}/{}".format(config['wallpapers_directory'], image))
         self.send_notifaction()
 
     def send_notifaction(self):
@@ -75,5 +78,6 @@ class Helper(object):
         for image in all_files:
             file = config['wallpapers_directory'] + image
 
-            if os.stat(file).st_size == 0:
+            if os.stat(file).st_size <= 503:
                 os.remove(file)
+
